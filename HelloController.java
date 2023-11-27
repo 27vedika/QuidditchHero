@@ -29,6 +29,6 @@ public class HelloController {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        manager.startGame();
+        manager.startGame(scene);
     }
 }
