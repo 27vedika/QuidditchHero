@@ -9,19 +9,22 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="357.0" prefWidth="523.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.HelloController">
-   <ImageView fx:id="background" fitHeight="412.0" fitWidth="523.0" layoutY="-2.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+   <ImageView fx:id="background" fitHeight="412.0" fitWidth="523.0" layoutY="-2.0" opacity="0.7" pickOnBounds="true" preserveRatio="true">
       <image>
          <Image url="@quidditch.jpg" />
       </image>
    </ImageView>
-  <Button fx:id="button_StartGame" layoutX="214.0" layoutY="173.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="54.0" prefWidth="92.0" text="Start">
+  <Button fx:id="button_StartGame" layoutX="214.0" layoutY="173.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="54.0" prefWidth="92.0" style="-fx-background-radius: 30; -fx-background-color: #755050;" text="START" textFill="WHITE">
       <opaqueInsets>
          <Insets />
-      </opaqueInsets></Button>
-  <Label fx:id="startLabel" layoutX="216.0" layoutY="236.0" prefHeight="17.0" prefWidth="92.0" />
-   <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="20.0" layoutY="47.0" prefHeight="81.0" prefWidth="484.0" text="Quidditch Hero" textAlignment="CENTER" textFill="#1f1f1f" wrapText="true">
+      </opaqueInsets>
       <font>
-         <Font name="Eras Bold ITC" size="57.0" />
+         <Font size="20.0" />
+      </font></Button>
+  <Label fx:id="startLabel" layoutX="216.0" layoutY="236.0" prefHeight="17.0" prefWidth="92.0" />
+   <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="20.0" layoutY="31.0" prefHeight="81.0" prefWidth="484.0" text="Quidditch Hero" textAlignment="CENTER" textFill="#1f1f1f" wrapText="true">
+      <font>
+         <Font name="Copperplate Gothic Bold" size="48.0" />
       </font>
    </Label>
    <ImageView fx:id="harrypotterImage" fitHeight="233.0" fitWidth="128.0" layoutX="35.0" layoutY="128.0" pickOnBounds="true" preserveRatio="true">
