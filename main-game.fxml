@@ -10,7 +10,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="357.0" prefWidth="523.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.MainGameController">
    <children>
-      <ImageView fx:id="background" fitHeight="412.0" fitWidth="523.0" layoutY="-2.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="background" fitHeight="412.0" fitWidth="523.0" layoutY="-2.0" opacity="0.7" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@quidditch.jpg" />
          </image>
@@ -23,6 +23,12 @@
       </Label>
       <Label fx:id="scoreLabel" contentDisplay="CENTER" layoutX="247.0" layoutY="78.0" prefHeight="17.0" prefWidth="27.0" />
       <Rectangle fx:id="pillar1" arcHeight="5.0" arcWidth="0.5" fill="#353638" height="145.0" layoutX="24.0" layoutY="215.0" stroke="#434343" strokeType="INSIDE" strokeWidth="0.2" width="67.0" />
-      <Rectangle fx:id="pillar2" arcHeight="5.0" arcWidth="0.5" fill="#353638" height="145.0" layoutX="145.0" layoutY="215.0" stroke="#434343" strokeType="INSIDE" strokeWidth="0.2" width="67.0" />
+      <Rectangle fx:id="pillar2" arcHeight="5.0" arcWidth="0.5" fill="#353638" height="145.0" layoutX="131.0" layoutY="215.0" stroke="#434343" strokeType="INSIDE" strokeWidth="0.2" width="67.0" />
+      <ImageView fx:id="character_img" fitHeight="73.0" fitWidth="40.0" layoutX="45.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@harry_potter.png" />
+         </image>
+      </ImageView>
+      <Rectangle fx:id="stick" layoutX="88.0" layoutY="215.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="3.0" />
    </children>
 </AnchorPane>
