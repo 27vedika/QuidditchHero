@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 
 public class HelloController {
 
@@ -23,7 +22,7 @@ public class HelloController {
     @FXML private ImageView harrypotterImage;
     @FXML private Button resumeButton;
     @FXML private Button startButton;
-
+    @FXML private ImageView character_img;
 
     @FXML
     public void onStartButtonClick(ActionEvent event) throws IOException {
@@ -42,14 +41,20 @@ public class HelloController {
         FileInputStream in = null;
         try{
             in = new FileInputStream("SaveGame.txt");
+
             int score = in.read();
             int snitch = in.read();
             int highscore = in.read();
 //            MainGameController manager = MainGameController.getInstance();
-//            manager.getCharacter().setScore(score);
-//            manager.getCharacter().setSnitches(snitch);
-//            manager.getCharacter().setHighScore(highscore);
-//            manager.spawnPillar();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("main-game.fxml"));
+            Parent root = loader.load();
+            MainGameController manager = loader.getController();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+            manager.resumeGame(scene, score, snitch, highscore);
+
         }
         finally{
             if (in!=null)

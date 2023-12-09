@@ -14,10 +14,17 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-class Pillar{
+interface CharacterInterface{
+    public void run(Stick s1, Pillar p1, Rectangle sRec, ImageView snitch);
+    public void fall() throws IOException;
+    public void revive();
+} //to ensure that character will implement these methods
+
+
+class Pillar {
     private int width;
     private int prevDistance;
-    transient private Rectangle pillar_rectangle;
+    private Rectangle pillar_rectangle;
 
     Pillar(Rectangle prev, Rectangle rectangle){
         this.pillar_rectangle = rectangle;
@@ -48,11 +55,14 @@ class Pillar{
     }
 }
 
-class Stick{
+
+//stick IS A rectangle
+class Stick extends Rectangle{
     private int length;
-    transient private Rectangle stick_rectangle;
+    private Rectangle stick_rectangle;
 
     Stick(Rectangle rect){
+        super();
         this.stick_rectangle = rect;
     }
 
@@ -67,16 +77,17 @@ class Stick{
     }
 }
 
-public class Character{
+public class Character implements CharacterInterface{
     private int score;
     private int level;
     private int snitches;
     private int highScore;
 //    private int lives;
-    transient private ImageView img;
+    private ImageView img;
     private boolean isDown;
     private MainGameController manager;
     private boolean isRunning;
+    private int positionY;
 
     Character(ImageView img, MainGameController manager){
         this.score=0;
@@ -88,15 +99,15 @@ public class Character{
         this.isDown = false;
         this.manager=manager;
         this.isRunning = false;
+        this.positionY = 1;
         manager.updateLabels(score, snitches);
     }
 
-    public void run(Stick s1, Pillar p1, Rectangle sRec){
-        if (this.isRunning){
-            System.out.println("Already running");
-            return;
-        }
-
+    public void run(Stick s1, Pillar p1, Rectangle sRec, ImageView snitch){
+//        if (this.isRunning){
+//            System.out.println("Already running");
+//            return;
+//        }
         int oHeight = (int)sRec.getHeight();
         int oWidth = (int)sRec.getWidth();
         int oLayoutY = (int)sRec.getLayoutY();
@@ -104,12 +115,15 @@ public class Character{
         sRec.setWidth(oHeight);
         sRec.setLayoutY(215);
 
-
         System.out.println("Running");
         this.isRunning = true;
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.millis(12.5), event -> {
                     this.img.setLayoutX(this.img.getLayoutX()+1);
+                    if (snitch.isVisible() && this.img.getLayoutX()+40==snitch.getLayoutX() && ((this.positionY==1 && snitch.getLayoutY()==180) || (this.positionY==-1 && snitch.getLayoutY()==220))){
+                        this.snitches+=1;
+                        snitch.setVisible(false);
+                    }
                 })
         );
         timeline.setCycleCount(s1.getLength());
@@ -130,7 +144,7 @@ public class Character{
                 System.out.println("Stopped running");
 
                 this.isRunning = false;
-                if (this.isDown || s1.getLength() < p1.getPrevDistance() || s1.getLength() > p1.getPrevDistance() + p1.getWidth()) {
+                if (this.isDown || s1.getLength() < p1.getPrevDistance() || s1.getLength() > p1.getPrevDistance() + p1.getWidth() || this.positionY==-1) {
                     try {
                         this.fall();
                     } catch (IOException e) {
@@ -156,10 +170,15 @@ public class Character{
     }
     public void fall() throws IOException {
         System.out.println("Fell");
+        if(positionY==-1){
+            img.setScaleY(-1*img.getScaleY());
+            img.setLayoutY(img.getLayoutY()-62);
+            positionY =1;
+        }
         manager.switchToFall();
 //        this.score=this.level*10;
 
-    } //handle case revival, high score, level, etc
+    } //handle revival, high score, level, etc
     public int getScore() {
         return score;
     }
@@ -191,5 +210,12 @@ public class Character{
 
     public void setHighScore(int highscore) {
         this.highScore = highscore;
+    }
+
+    public void setPositionY (int x){
+        this.positionY = x;
+    }
+    public int getPositionY(){
+        return this.positionY;
     }
 }

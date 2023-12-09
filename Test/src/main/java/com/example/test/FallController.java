@@ -60,9 +60,7 @@ public class FallController {
         stage.setScene(mainScene);
         stage.show();
         manager.saveContext(mainScene, mainCharacter);
-        System.out.print("After revival: ");
         manager.spawnPillar();
-
     }
 
     @FXML

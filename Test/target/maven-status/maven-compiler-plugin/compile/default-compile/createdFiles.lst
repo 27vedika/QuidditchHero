@@ -1,0 +1,9 @@
+com\example\test\Pillar.class
+com\example\test\Character.class
+com\example\test\CharacterInterface.class
+module-info.class
+com\example\test\FallController.class
+com\example\test\MainGameController.class
+com\example\test\HelloApplication.class
+com\example\test\HelloController.class
+com\example\test\Stick.class
