@@ -1,22 +1,14 @@
 package com.example.test;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 interface CharacterInterface{
     public void run(Stick s1, Pillar p1, Rectangle sRec, ImageView snitch);
-    public void fall() throws IOException;
+    public void fall();
     public void revive();
 } //to ensure that character will implement these methods
 
@@ -57,13 +49,22 @@ class Pillar {
 
 
 //stick IS A rectangle
+//SINGLETON
 class Stick extends Rectangle{
+    private static Stick stick = null;
     private int length;
     private Rectangle stick_rectangle;
+    private int stickSet = 0;
 
-    Stick(Rectangle rect){
+    private Stick(){
         super();
-        this.stick_rectangle = rect;
+    }
+
+    public static Stick getInstance(){
+        if (stick==null){
+            stick = new Stick();
+        }
+        return stick;
     }
 
     public int getLength(){
@@ -75,6 +76,12 @@ class Stick extends Rectangle{
     public Rectangle getStick_rectangle(){
         return this.stick_rectangle;
     }
+    public void setStick_rectangle(Rectangle rect){
+        if (stickSet<2){
+            this.stick_rectangle = rect;
+            stickSet++;
+        }
+    }
 }
 
 public class Character implements CharacterInterface{
@@ -82,32 +89,26 @@ public class Character implements CharacterInterface{
     private int level;
     private int snitches;
     private int highScore;
-//    private int lives;
     private ImageView img;
     private boolean isDown;
     private MainGameController manager;
     private boolean isRunning;
     private int positionY;
 
-    Character(ImageView img, MainGameController manager){
+    Character(MainGameController manager, ImageView img){
         this.score=0;
         this.level=1;
         this.snitches=0;
         this.highScore=0;
-//        this.lives=3;
         this.img = img;
         this.isDown = false;
-        this.manager=manager;
+        this.manager=Manager.getInstance().getManager();
         this.isRunning = false;
         this.positionY = 1;
         manager.updateLabels(score, snitches);
     }
 
     public void run(Stick s1, Pillar p1, Rectangle sRec, ImageView snitch){
-//        if (this.isRunning){
-//            System.out.println("Already running");
-//            return;
-//        }
         int oHeight = (int)sRec.getHeight();
         int oWidth = (int)sRec.getWidth();
         int oLayoutY = (int)sRec.getLayoutY();
@@ -120,7 +121,7 @@ public class Character implements CharacterInterface{
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.millis(12.5), event -> {
                     this.img.setLayoutX(this.img.getLayoutX()+1);
-                    if (snitch.isVisible() && this.img.getLayoutX()+40==snitch.getLayoutX() && ((this.positionY==1 && snitch.getLayoutY()==180) || (this.positionY==-1 && snitch.getLayoutY()==220))){
+                    if (snitch.isVisible() && (this.img.getLayoutX()==snitch.getLayoutX() || this.img.getLayoutX()+40==snitch.getLayoutX()) && ((this.positionY==1 && snitch.getLayoutY()==180) || (this.positionY==-1 && snitch.getLayoutY()==220))){
                         this.snitches+=1;
                         snitch.setVisible(false);
                     }
@@ -145,11 +146,7 @@ public class Character implements CharacterInterface{
 
                 this.isRunning = false;
                 if (this.isDown || s1.getLength() < p1.getPrevDistance() || s1.getLength() > p1.getPrevDistance() + p1.getWidth() || this.positionY==-1) {
-                    try {
                         this.fall();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
                 } else {
                     this.score++;
                     System.out.println("Score: "+this.score);
@@ -164,11 +161,11 @@ public class Character implements CharacterInterface{
                 }
             });
         });
-    } //handle cherry collection, upside down
+    }
     public void revive() {
         this.snitches-=3;
     }
-    public void fall() throws IOException {
+    public void fall() {
         System.out.println("Fell");
         if(positionY==-1){
             img.setScaleY(-1*img.getScaleY());
@@ -176,9 +173,8 @@ public class Character implements CharacterInterface{
             positionY =1;
         }
         manager.switchToFall();
-//        this.score=this.level*10;
 
-    } //handle revival, high score, level, etc
+    }
     public int getScore() {
         return score;
     }
@@ -196,12 +192,6 @@ public class Character implements CharacterInterface{
     }
     public boolean isRunning() {
         return isRunning;
-    }
-
-    public void getSavedParameters(int score, int snitches, int highscore){
-        this.score=score;
-        this.snitches=snitches;
-        this.highScore=highscore;
     }
 
     public void setSnitches(int snitch) {

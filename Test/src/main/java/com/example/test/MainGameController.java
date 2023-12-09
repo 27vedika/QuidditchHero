@@ -24,38 +24,43 @@ import java.util.Random;
 import static javafx.scene.paint.Color.rgb;
 
 
-//class MyScene extends Scene implements Serializable{
-//    private Scene scene;
-//    public MyScene(Scene scene) {
-//        super(scene.getRoot());
-//        this.scene = scene;
-//    }
-//
-//    public Scene getScene() {
-//        return scene;
-//    }
-//}
+//SINGLETON
+class Manager{
+    private static Manager object = null;
+    private MainGameController manager;
+    private int managerSet = 0;
+
+    private Manager(){}
+
+    public static Manager getInstance(){
+        if (object==null){
+            object = new Manager();
+        }
+        return object;
+    }
+
+    public MainGameController getManager(){
+        return this.manager;
+    }
+    public void setManager(MainGameController manager){
+        if(managerSet<2){
+            this.manager = manager;
+            managerSet++;
+        }
+    }
+}
 
 public class MainGameController{
-//    private static MainGameController manager = null;
-//    public static MainGameController getInstanceOf() {
-//        if (manager == null)
-//            manager = new MainGameController();
-//        return manager;
-//    }
-//    private MainGameController(){}
-
 
     private Timeline timeline;
     private Stage stage;
     private Scene scene;
     private Parent root;
     private Random random = new Random();
-//    public MyScene myScene = new MyScene(this.scene);
 
     @FXML private Label snitchLabel;
     @FXML private Rectangle stick;
-    private final Stick s1 = new Stick(stick);;
+    private final Stick s1 = Stick.getInstance();
     @FXML private Rectangle pillar1;
     @FXML private Rectangle pillar2;
     private Pillar p1;
@@ -68,29 +73,10 @@ public class MainGameController{
     @FXML private ImageView character_img;
     private Character character;
 
-    public static int high_score_to_save=0;
-    public static int snitch_count_to_save=0;
-
-
-
-    @FXML
-    protected void onQuitButtonClick(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
     @FXML
     public void onPauseButtonClick(ActionEvent event) throws IOException {
-//        ObjectOutputStream out = null;
         FileOutputStream out = null;
         try{
-//            out = new ObjectOutputStream(new FileOutputStream("SaveGame.txt"));
-//            out.writeObject(this);
-//            out.writeObject(character);
-//            out.writeObject(myScene.getScene());
             out = new FileOutputStream("SaveGame.txt");
 
             out.write(character.getScore());
@@ -137,6 +123,7 @@ public class MainGameController{
         pillar1.setWidth(pillar2.getWidth());
         System.out.println(pillar1.getWidth());
         character_img.setLayoutX(pillar1.getLayoutX()+pillar1.getWidth()-40);
+        System.out.println("CHARACTER: "+character_img.getLayoutX());
         System.out.println(character_img.getLayoutX());
         pillar2.setWidth(random.nextInt(40,100));
         System.out.println(pillar2.getWidth());
@@ -156,6 +143,7 @@ public class MainGameController{
         stick.setFill(Color.BLACK);
         stick.setWidth(3);
         stick.setHeight(0);
+        System.out.println("STICK HEIGHT: "+stick.getHeight());
         stick.setLayoutX(pillar1.getLayoutX()+pillar1.getWidth()-3);
         stick.setLayoutY(215);
         s1.setLength(0);
@@ -163,43 +151,34 @@ public class MainGameController{
     }
 
     private void mousePressHandler(Scene scene) {
-//        if (character.isRunning()){
-//            scene.setOnMouseClicked(event -> {
-//                if (event.getButton() == MouseButton.PRIMARY){
-//                    System.out.println("MOUSE CLICKED");
-//                }
-//            });
-//        }
-//        else {
-            scene.setOnMousePressed(event -> {
-                if (event.getButton() == MouseButton.PRIMARY && !character.isRunning()) {
-                    mousePressed = true;
-                    extendStick();
+        scene.setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && !character.isRunning()) {
+                mousePressed = true;
+                extendStick();
+            }
+            else if (event.getButton() == MouseButton.PRIMARY && character.isRunning()){
+                System.out.println("MOUSE CLICKED");
+                character_img.setScaleY(-1*character_img.getScaleY());
+                if (character.getPositionY()==1){
+                    character.setPositionY(-1);
+                    character_img.setLayoutY(character_img.getLayoutY()+62);
                 }
-                else if (event.getButton() == MouseButton.PRIMARY && character.isRunning()){
-                    System.out.println("MOUSE CLICKED");
-                    character_img.setScaleY(-1*character_img.getScaleY());
-                    if (character.getPositionY()==1){
-                        character.setPositionY(-1);
-                        character_img.setLayoutY(character_img.getLayoutY()+62);
-                    }
-                    else if (character.getPositionY()== -1){
-                        character.setPositionY(1);
-                        character_img.setLayoutY(character_img.getLayoutY()-62);
-                    }
+                else if (character.getPositionY()== -1){
+                    character.setPositionY(1);
+                    character_img.setLayoutY(character_img.getLayoutY()-62);
                 }
-            });
+            }
+        });
 
-            scene.setOnMouseReleased(event -> {
-                if (event.getButton() == MouseButton.PRIMARY && !character.isRunning()) {
-                    mousePressed = false;
-                    s1.setLength((int) stick.getHeight());
-                    stick.setFill(rgb(23, 23, 23));
-                    run();
-                }
-            });
-        }
-//    }
+        scene.setOnMouseReleased(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && !character.isRunning()) {
+                mousePressed = false;
+                s1.setLength((int) stick.getHeight());
+                stick.setFill(rgb(23, 23, 23));
+                run();
+            }
+        });
+    }
 
     private void extendStick(){
         if (timeline!=null){
@@ -218,8 +197,12 @@ public class MainGameController{
         timeline.play();
     }
 
-    public void startGame(Scene scene){
-        character = new Character(character_img, this);
+    public void startGame(Scene scene) throws IOException {
+        Manager.getInstance().setManager(this);
+        s1.setStick_rectangle(stick);
+        character = new Character(this, character_img);
+        loadStatusNewGame();
+        updateLabels(character.getScore(), character.getSnitches());
         this.scene=scene;
         character_img.setLayoutX(pillar1.getLayoutX()+pillar1.getWidth()-40);
         pillar2.setWidth(random.nextInt(40,100));
@@ -230,11 +213,14 @@ public class MainGameController{
     }
 
     public void resumeGame(Scene scene, int score, int snitches, int highScore){
-        character = new Character(character_img, this);
+        Manager.getInstance().setManager(this);
+        s1.setStick_rectangle(stick);
+        character = new Character(this, character_img);
         character.setScore(score);
         System.out.println("Score set: "+ character.getScore());
         character.setSnitches(snitches);
         character.setHighScore(highScore);
+        updateLabels(character.getScore(), character.getSnitches());
         this.scene=scene;
         character_img.setLayoutX(pillar1.getLayoutX()+pillar1.getWidth()-40);
         pillar2.setWidth(random.nextInt(40,100));
@@ -251,25 +237,25 @@ public class MainGameController{
         character.run(s1,p2, stick, snitchCollectible);
     }
 
-    public void switchToFall() throws IOException {
-//        stick.setHeight(0);
-//        stick.setWidth(3);
-//        stick.setLayoutX(pillar1.getLayoutX()+pillar1.getWidth()-3);
-//        s1.setLength(0);
-
-
+    public void switchToFall() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fall-view.fxml"));
-        Parent root = loader.load();
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         FallController fallController = loader.getController();
         Stage stage = (Stage) character_img.getScene().getWindow();
         fallController.setStage(stage);
         Scene fallScene = new Scene(root);
         stage.setScene(fallScene);
         stage.show();
-        fallController.mainContext(this, this.scene, this.character);
+        fallController.mainContext(this.scene, this.character);
         fallController.displayFall();
     }
 
+    //load status on revival
     public void saveContext(Scene scene, Character character){
         this.scene = scene;
         this.character = character;
@@ -284,9 +270,22 @@ public class MainGameController{
         return this.character;
     }
 
-    public void shutdown() throws IOException {
-        high_score_to_save = character.getHighScore();
-        snitch_count_to_save = character.getSnitches();
-        HelloApplication.saveData(character);
+    //load status on restarting a game (after terminating once)
+    public void loadStatusNewGame() throws IOException {
+        FileInputStream in2 = null;
+
+        try{
+            in2 = new FileInputStream("SaveGame.txt");
+            if(in2.read()!=-1) {
+                int snitch = in2.read();
+                int hscore = in2.read();
+                character.setHighScore(hscore);
+                character.setSnitches(snitch);
+            }
+        }
+        finally{
+            if (in2!=null)
+                in2.close();
+        }
     }
 }

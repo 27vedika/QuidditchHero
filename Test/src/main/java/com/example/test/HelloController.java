@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class HelloController {
@@ -20,7 +19,7 @@ public class HelloController {
     @FXML private ImageView background;
     @FXML private Label headerLabel;
     @FXML private ImageView harrypotterImage;
-    @FXML private Button resumeButton;
+    @FXML private static Button resumeButton;
     @FXML private Button startButton;
     @FXML private ImageView character_img;
 
@@ -39,12 +38,19 @@ public class HelloController {
     @FXML
     public void onResumeButtonClick(ActionEvent event) throws IOException, ClassNotFoundException {
         FileInputStream in = null;
+        int score, snitch, highscore;
         try{
             in = new FileInputStream("SaveGame.txt");
-
-            int score = in.read();
-            int snitch = in.read();
-            int highscore = in.read();
+            score = in.read();
+            if(score==-1){
+                score=0;
+                snitch=0;
+                highscore=0;
+            }
+            else {
+                snitch = in.read();
+                highscore = in.read();
+            }
 //            MainGameController manager = MainGameController.getInstance();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("main-game.fxml"));
             Parent root = loader.load();
@@ -54,7 +60,6 @@ public class HelloController {
             stage.setScene(scene);
             stage.show();
             manager.resumeGame(scene, score, snitch, highscore);
-
         }
         finally{
             if (in!=null)

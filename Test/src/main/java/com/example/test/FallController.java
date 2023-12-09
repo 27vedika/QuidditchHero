@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 
@@ -65,19 +66,31 @@ public class FallController {
 
     @FXML
     protected void onQuitButtonClick(ActionEvent event) throws IOException {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream("SaveGame.txt");
+            out.write(0);
+            out.write(Manager.getInstance().getManager().getCharacter().getSnitches());
+            out.write(Manager.getInstance().getManager().getCharacter().getHighScore());
+        }
+        finally {
+            if (out!=null)
+                out.close();
+        }
+
+//        Manager.getInstance().getManager().saveOnQuit();
         root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
-
-        public void setStage(Stage stage) {
+    public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-    public void mainContext(MainGameController manager, Scene scene, Character character){
-        this.manager = manager;
+    public void mainContext(Scene scene, Character character){
+        this.manager = Manager.getInstance().getManager();
         this.mainScene = scene;
         this.mainCharacter = character;
     }

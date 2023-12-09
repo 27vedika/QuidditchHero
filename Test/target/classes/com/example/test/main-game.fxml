@@ -16,7 +16,7 @@
             <Image url="@quidditch.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="button_quitGame" layoutX="25.0" layoutY="25.0" mnemonicParsing="false" onAction="#onQuitButtonClick" text="Quit" />
+      <Button fx:id="button_quitGame" layoutX="25.0" layoutY="25.0" mnemonicParsing="false" text="Quit" visible="false" />
       <Label fx:id="scoreText" layoutX="232.0" layoutY="39.0" text="Score ">
          <font>
             <Font name="Berlin Sans FB" size="23.0" />

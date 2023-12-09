@@ -15,12 +15,12 @@
          <Image url="@quidditch.jpg" />
       </image>
    </ImageView>
-  <Button fx:id="startButton" layoutX="214.0" layoutY="173.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="54.0" prefWidth="92.0" style="-fx-border-color: white; -fx-background-color: #2f3d2f; -fx-border-width: 2;" text="START" textFill="WHITE">
+  <Button fx:id="startButton" layoutX="214.0" layoutY="173.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="54.0" prefWidth="92.0" style="-fx-border-color: white; -fx-background-color: #2f3d2f; -fx-border-width: 2;" text="NEW GAME" textFill="WHITE">
       <opaqueInsets>
          <Insets />
       </opaqueInsets>
       <font>
-         <Font size="16.0" />
+         <Font size="13.0" />
       </font></Button>
    <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="20.0" layoutY="46.0" prefHeight="81.0" prefWidth="484.0" text="Quidditch Hero" textAlignment="CENTER" textFill="#e4e3e3" wrapText="true">
       <font>
